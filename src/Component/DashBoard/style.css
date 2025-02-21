@@ -1,0 +1,29 @@
+
+  
+  .slot {
+    width: 100%;
+    min-height: 150px;
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+  }
+  
+  .item {
+    background: #10b981;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .add-task-btn {
+    padding: 10px 15px;
+    background: #be123c;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  

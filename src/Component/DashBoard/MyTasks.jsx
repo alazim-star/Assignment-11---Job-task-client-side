@@ -43,7 +43,7 @@ const Task = ({ task, index, column, moveTask, editTask, deleteTask }) => {
   );
 };
 
-const Column = ({ column, tasks = [], moveTask, addTask, editTask, deleteTask }) => {
+const Column = ({ column, tasks = [], moveTask, editTask, deleteTask }) => {
   const [, drop] = useDrop({
     accept: ItemType,
     drop: (draggedTask) => moveTask(draggedTask.column, draggedTask.index, column),
@@ -80,9 +80,10 @@ const MyTasks = () => {
   });
 
   const [newTaskText, setNewTaskText] = useState('');
-  const [newTaskImage, setNewTaskImage] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // ✅ Move Task Function (Drag & Drop)
   const moveTask = (fromColumn, fromIndex, toColumn) => {
     setColumns((prev) => {
       const newColumns = { ...prev };
@@ -95,28 +96,55 @@ const MyTasks = () => {
     });
   };
 
-  const addTask = (type, content) => {
+  // ✅ Add Task and Save to Server
+  const addTask = async (type, content) => {
     const newTask = {
       id: uuidv4(),
       type,
       ...(type === 'text' ? { text: content } : { imageUrl: content }),
+      date: selectedDate.toISOString(),
     };
+
     setColumns((prev) => ({
       ...prev,
       'To-Do': [...prev['To-Do'], newTask],
     }));
+
+    // Save to backend
+    try {
+      setIsSubmitting(true);
+      const response = await fetch('http://localhost:5000/allTasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newTask),
+      });
+      const data = await response.json();
+      setIsSubmitting(false);
+      if (!data.success) {
+        alert('Failed to save task');
+      }
+    } catch (error) {
+      setIsSubmitting(false);
+      alert('Error saving task');
+    }
   };
 
+
+
+
+  
+  // ✅ Edit Task
   const editTask = (column, index, newText) => {
     setColumns((prev) => {
       const newColumns = { ...prev };
-      if (newColumns[column][index]) {
+      if (newColumns[column] && newColumns[column][index]) {
         newColumns[column][index].text = newText;
       }
-      return newColumns;
+      return { ...newColumns };
     });
   };
 
+  // ✅ Delete Task
   const deleteTask = (column, index) => {
     setColumns((prev) => {
       const newColumns = { ...prev };
@@ -125,12 +153,12 @@ const MyTasks = () => {
     });
   };
 
+  // ✅ Image Upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setNewTaskImage(reader.result);
         addTask('image', reader.result);
       };
       reader.readAsDataURL(file);
@@ -140,48 +168,57 @@ const MyTasks = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="board gap-6 w-full min-h-screen bg-red-50">
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Task Management</h2>
-        <div className="justify-center items-center input-section w-full lg:flex  gap-4 mb-8">
-          
-         <div>
-         <Calendar onChange={setSelectedDate} value={selectedDate} className="mb-4" />
-         </div>
-         <div className=''>
-           {/* input 1 */}
-           <div className="lg:flex gap-4 items-center">
-    
-    <input
-      type="text"
-      className="border p-2 rounded-lg text-lg focus:ring-2 focus:ring-blue-500"
-      placeholder="Enter a new task"
-      value={newTaskText}
-      onChange={(e) => setNewTaskText(e.target.value)}
-    />
-    <button
-      className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
-      onClick={() => {
-        if (newTaskText.trim()) {
-          addTask('text', newTaskText);
-          setNewTaskText('');
-        }
-      }}
-    >
-      Add Task
-    </button>
-  </div>
-{/* input 2  */}
-<div className="lg:flex gap-4 mt-3">
-    <input type="file" accept="image" className="border  rounded-lg" onChange={handleImageUpload} />
-    <button className="bg-purple-600 text-white p-2 rounded-lg">Add Image</button>
-  </div>
-         </div>
-         
-          
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Task Management</h2>
+
+        <div className="justify-center items-center input-section w-full lg:flex gap-4 mb-8">
+          {/* Calendar */}
+          <div>
+            <Calendar onChange={setSelectedDate} value={selectedDate} className="mb-4" />
+          </div>
+
+          <div>
+            {/* Task Input */}
+            <div className="lg:flex gap-4 items-center">
+              <input
+                type="text"
+                className="border p-2 rounded-lg text-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter a new task"
+                value={newTaskText}
+                onChange={(e) => setNewTaskText(e.target.value)}
+              />
+              <button
+                className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
+                onClick={() => {
+                  if (newTaskText.trim()) {
+                    addTask('text', newTaskText);
+                    setNewTaskText('');
+                  }
+                }}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Adding...' : 'Add Task'}
+              </button>
+            </div>
+
+            {/* Image Upload */}
+            <div className="lg:flex gap-4 mt-3">
+              <input type="file" accept="image/*" className="border rounded-lg" onChange={handleImageUpload} />
+              <button className="bg-purple-600 text-white p-2 rounded-lg">Add Image</button>
+            </div>
+          </div>
         </div>
-        
+
+        {/* Columns Section */}
         <div className="columns w-full lg:flex gap-8 justify-between">
           {Object.keys(columns).map((column) => (
-            <Column key={column} column={column} tasks={columns[column]} moveTask={moveTask} addTask={addTask} editTask={editTask} deleteTask={deleteTask} />
+            <Column 
+              key={column} 
+              column={column} 
+              tasks={columns[column]} 
+              moveTask={moveTask} 
+              editTask={editTask} 
+              deleteTask={deleteTask} 
+            />
           ))}
         </div>
       </div>
@@ -189,4 +226,4 @@ const MyTasks = () => {
   );
 };
 
-export default MyTasks
+export default MyTasks;
