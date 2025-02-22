@@ -1,6 +1,6 @@
 # 🎓 CIRCLE – Task Management Platform
 
-![CIRCLE](https://i.ibb.co.com/4ZnT6vj0/a.jpg)
+![CIRCLE]()
 
 A Task Management Platform that enables users to organize, track, and collaborate on tasks with real-time synchronization, drag-and-drop functionality, and a clean, responsive UI
 
@@ -39,18 +39,18 @@ A Task Management Platform that enables users to organize, track, and collaborat
 <div align="center">
   <table>
     <tr>
-      <td><img src="https://i.ibb.co.com/4ZnT6vj0/a.jpg" width="300" alt="The Grand Palace"></td>
+      <td><img src="" width="300" alt="The Grand Palace"></td>
     </tr>
   </table>
 </div>
 
 ## 🚀 Live Demo  
 
-🔗 **Live Website**: [The Grand Palace](https://b10a11-client-side.web.app/)  
+🔗 **Live Website**: [CIRCLE]()  
 
 📜 Documentation
 
-📄 Project Document:  [View Here ](https://docs.google.com/document/d/1d5UG3gjfwGknxlSFrMX5AszZFDMBQ6UAy9pDMmmGu34/edit?tab=t.0#heading=h.i22hzo8dczks)     
+📄 Project Document:  [View Here ](https://docs.google.com/document/d/1_uGyEZ1SN_60Enj_NDNroTZ0okAjDjfMZV6yF2WgVtk/edit?tab=t.0#heading=h.kg36simxeawx)     
 
 🏆 Contributing
 Contributions are welcome! Feel free to submit a pull request.
@@ -58,7 +58,7 @@ Contributions are welcome! Feel free to submit a pull request.
 ## 📦 Installation
 1. **Clone the repository**
    ```sh
-   git clone https://github.com/alazim-star/task-management-platform.git
+   git clone https://github.com/alazim-star/Assignment-11---Job-task-client-side.git
    cd task-management-platform
    ```
 
@@ -83,6 +83,8 @@ Contributions are welcome! Feel free to submit a pull request.
 
 ```bash
 # Clone the repository
-git clone https://github.com/alazim-star/b10a11-client-side.git
+git clone https://github.com/alazim-star/Assignment-11---Job-task-client-side.git
+# server-side  repository
+git clone https://github.com/alazim-star/Assignment-11---Job-task-server-side.git
 
 # Install dependencies
