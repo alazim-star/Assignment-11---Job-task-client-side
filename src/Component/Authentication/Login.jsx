@@ -32,14 +32,14 @@ const Login = () => {
                     hideProgressBar: true,
                 });
                 e.target.reset();
-                axios.post('https://y-one-steel.vercel.app/jwt', user, { withCredentials: true })
+                axios.post('https://assignment-11-job-task-server-side.vercel.app/jwt', user, { withCredentials: true })
                     .then(res => console.log(res.data));
 
                 navigate(location?.state || "/");
 
                 // Update last login time
                 const lastSignInTime = result?.user?.metadata?.lastSignInTime;
-                fetch(`https://y-one-steel.vercel.app/users`, {
+                fetch(`https://assignment-11-job-task-server-side.vercel.app/users`, {
                     method: 'PATCH',
                     headers: { 'content-type': 'application/json' },
                     body: JSON.stringify({ email, lastSignInTime })

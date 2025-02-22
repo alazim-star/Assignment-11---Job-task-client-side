@@ -54,7 +54,7 @@ useEffect(() => {
         try {
             if (currentUser?.email) {
                 const user = { email: currentUser.email };
-                axios.post('https://y-one-steel.vercel.app/jwt',user,{withCredentials:true})
+                axios.post('https://assignment-11-job-task-server-side.vercel.app/jwt',user,{withCredentials:true})
                 .then(res=>{
                     console.log('login token',res.data)
                     setLoading(false)
@@ -62,7 +62,7 @@ useEffect(() => {
                   
             } else {
                 const response = await axios.post(
-                    'https://y-one-steel.vercel.app/logout',
+                    'https://assignment-11-job-task-server-side.vercel.app/logout',
                     {},
                     { withCredentials: true }
                     .then(res=>{

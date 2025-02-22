@@ -118,7 +118,7 @@ const MyTasks = () => {
     setNewTaskDescription('');
     setIsSubmitting(true);
     try {
-      await fetch('https://y-one-steel.vercel.app/allTasks', {
+      await fetch('https://assignment-11-job-task-server-side.vercel.app/allTasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newTask),
