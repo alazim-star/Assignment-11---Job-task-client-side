@@ -36,21 +36,16 @@ const MyProfile = () => {
         {user?.email}
         </p>
 
-        <div className="flex justify-center mt-4">
-          {loading ? (
-          
-
-          <span className="loading loading-spinner w-20 h-20 text-primary"></span>
+       
 
 
-          ) : (
+      
             <img
               src={user?.photoURL}
               alt="Profile"
               className="w-24 h-24 rounded-full object-cover border-4 border-purple-600"
             />
-          )}
-        </div>
+   
       </header>
 
       <section className="mb-6">
