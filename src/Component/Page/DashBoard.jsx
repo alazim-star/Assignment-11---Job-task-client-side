@@ -25,13 +25,7 @@ const DashBoard = () => {
                 </div>
 
                 <ul className='p-2 menu'>
-                    <li>
-                        <NavLink to="/dashBoard/home" className={({ isActive }) =>
-                            `p-3 mx-4 rounded-xl transition hover:translate-y-1 hover:font-bold hover:text-[#9f004d] ${isActive ? "text-blue-900 font-bold" : ""}`
-                        }>
-                            My Profile
-                        </NavLink>
-                    </li>
+                    
                     <li>
                         <NavLink to="/dashBoard/myTasks" className={({ isActive }) =>
                             `p-3 mx-4 rounded-xl transition hover:translate-y-1 hover:font-bold hover:text-[#9f004d] ${isActive ? "text-blue-900 font-bold" : ""}`
