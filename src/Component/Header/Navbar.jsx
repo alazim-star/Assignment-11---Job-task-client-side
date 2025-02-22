@@ -40,7 +40,7 @@ Home
 
     
    
-        <NavLink to="/dashboard/home" className="hover:text-purple-600 transition mx-4">
+        <NavLink to="/dashboard/myTasks" className="hover:text-purple-600 transition mx-4">
    Dashboard
         </NavLink>
       
@@ -48,9 +48,6 @@ Home
 Login
     </NavLink>
    
-    
-   
-
   
    
   </>
@@ -61,14 +58,14 @@ Login
     <nav
       className={`${
         scrolled
-          ? "backdrop-blur-sm bg-white/60 text-black"
-          : "bg-gradient-to-l from-pink-800 to-[#23085a] text-white"
+          ? "backdrop-blur-sm bg-white/60 text-black h-20"
+          : "bg-gradient-to-l from-pink-800 to-[#23085a] text-white "
       } w-full sticky top-0 z-50 transition-all duration-300`}
     >
-      <div className="flex flex-wrap items-center justify-between px-6 container mx-auto">
+      <div className=" flex flex-wrap items-center justify-between px-6 container mx-auto">
         {/* Hamburger Menu for Mobile */}
         <button
-          className="sm:hidden block text-white focus:outline-none mr-4"
+          className="sm:hidden block text-white focus:outline-none mr-4 "
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           <svg
@@ -88,14 +85,14 @@ Login
         </button>
 
         {/* Logo and Title */}
-        <div className=" flex items-center   lg:mr-24  ">
+        <div className=" flex items-center mr-48  ">
         
-          <img className="lg:w-24 h-24 mx-2" src="https://i.ibb.co.com/HLDFFhhL/Brown-Illustration-Kindergarten-School-Logo-1-removebg-preview.png" alt="Logo" />
+          <img className="lg:w-24 h-24 " src="https://i.ibb.co.com/HLDFFhhL/Brown-Illustration-Kindergarten-School-Logo-1-removebg-preview.png" alt="Logo" />
          <Link to='/'> <h2 className="text-3xl font-bold uppercase">Circle</h2></Link>
         </div>
 
         {/* Navigation Links */}
-        <div className="hidden sm:flex items-center">{links}</div>
+        <div className="hidden sm:flex items-center ">{links}</div>
 
         {/* Login/Logout Button and User Information */}
         <div className=" items-center ">
@@ -130,7 +127,7 @@ Login
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="sm:hidden bg-[#151515] text-white px-6 py-4">
+        <div className="sm:hidden bg-[#23085a] text-white px-6 py-4">
           <div className="flex flex-col space-y-4">{links}</div>
         </div>
       )}

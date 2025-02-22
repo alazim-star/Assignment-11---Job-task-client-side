@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { v4 as uuidv4 } from 'uuid';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { FaHome, FaClock, FaTasks, FaTrash } from 'react-icons/fa';
 
 const ItemType = 'TASK';
 
@@ -11,33 +11,48 @@ const Task = ({ task, index, column, moveTask, editTask, deleteTask }) => {
   const [{ isDragging }, drag] = useDrag({
     type: ItemType,
     item: { task, index, column },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
+    collect: (monitor) => ({ isDragging: monitor.isDragging() }),
   });
 
   return (
     <div
       ref={drag}
-      className={`task bg-white p-4 rounded-lg shadow-md flex justify-between items-center cursor-pointer transition-all hover:bg-gray-100 ${
+      className={`task bg-white p-4 rounded-lg shadow-md flex items-center justify-between cursor-pointer transition-all hover:bg-gray-100 ${
         isDragging ? 'opacity-50' : 'opacity-100'
       }`}
     >
-      {task.type === 'text' ? (
-        <input
-          type="text"
-          className="border-none focus:ring-0 w-full text-lg text-gray-700"
-          value={task?.text || ''}
-          onChange={(e) => editTask(column, index, e.target.value)}
-        />
-      ) : (
-        <img src={task.imageUrl} alt="task" className="w-16 h-16 object-cover rounded-md" />
-      )}
-      <button
-        className="text-red-500 text-xl"
-        onClick={() => deleteTask(column, index)}
-      >
-        ❌
+      <div className="flex items-center gap-3">
+    
+        <div className=''>
+       <div className='flex gap-2 items-center'>
+       <FaHome className="text-purple-700 text-xl" />
+        <p className='underline'>  Title:</p> <input
+            type="text"
+            className="border-none focus:ring-0 w-full text-lg text-gray-700"
+            value={task.text || ''}
+            onChange={(e) => editTask(column, index, e.target.value)}
+            maxLength={50}
+            placeholder="Task title"
+          />
+       </div>
+     <div className='flex gap-2'><FaHome className='text-purple-700 text-xl  '></FaHome>
+    <p className='underline'> Description:</p> {task.description && (
+          <textarea
+              className="border-none focus:ring-0 w-full text-gray-600"
+              value={task.description}
+              onChange={(e) => editTask(column, index, e.target.value, 'description')}
+              maxLength={200}
+              placeholder="Task description"
+            />
+          )}
+     </div>
+          <p className="text-sm text-purple-800 flex items-center gap-1">
+            <FaClock /> {task.time}
+          </p>
+        </div>
+      </div>
+      <button className="text-purple-800 text-xl" onClick={() => deleteTask(column, index)}>
+<FaTrash></FaTrash>
       </button>
     </div>
   );
@@ -50,11 +65,10 @@ const Column = ({ column, tasks = [], moveTask, editTask, deleteTask }) => {
   });
 
   return (
-    <div
-      ref={drop}
-      className="column w-full max-w-sm bg-[#f3f4f6] border p-5 rounded-xl shadow-xl space-y-6"
-    >
-      <h3 className="text-2xl font-semibold text-gray-800">{column}</h3>
+    <div ref={drop} className="column w-full max-w-sm bg-gray-100 border p-5 rounded-xl shadow-xl space-y-6">
+      <h3 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
+        <FaTasks className="text-gray-700" /> {column}
+      </h3>
       <div className="space-y-3">
         {tasks.map((task, index) => (
           <Task
@@ -73,78 +87,57 @@ const Column = ({ column, tasks = [], moveTask, editTask, deleteTask }) => {
 };
 
 const MyTasks = () => {
-  const [columns, setColumns] = useState({
-    'To-Do': [],
-    'In Progress': [],
-    'Done': [],
-  });
-
+  const [columns, setColumns] = useState({ 'To-Do': [], 'In Progress': [], 'Done': [] });
   const [newTaskText, setNewTaskText] = useState('');
+  const [newTaskDescription, setNewTaskDescription] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ✅ Move Task Function (Drag & Drop)
   const moveTask = (fromColumn, fromIndex, toColumn) => {
     setColumns((prev) => {
       const newColumns = { ...prev };
-      if (!newColumns[fromColumn] || !newColumns[fromColumn][fromIndex]) {
-        return prev;
-      }
       const [movedTask] = newColumns[fromColumn].splice(fromIndex, 1);
       newColumns[toColumn] = [...(newColumns[toColumn] || []), movedTask];
       return { ...newColumns };
     });
   };
 
-  // ✅ Add Task and Save to Server
-  const addTask = async (type, content) => {
+  const addTask = async () => {
+    if (!newTaskText.trim()) return;
+
     const newTask = {
-      id: uuidv4(),
-      type,
-      ...(type === 'text' ? { text: content } : { imageUrl: content }),
+      text: newTaskText,
+      description: newTaskDescription,
       date: selectedDate.toISOString(),
+      time: new Date().toLocaleString(),
     };
 
-    setColumns((prev) => ({
-      ...prev,
-      'To-Do': [...prev['To-Do'], newTask],
-    }));
-
-    // Save to backend
+    setColumns((prev) => ({ ...prev, 'To-Do': [...prev['To-Do'], newTask] }));
+    setNewTaskText('');
+    setNewTaskDescription('');
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
-      const response = await fetch('http://localhost:5000/allTasks', {
+      await fetch('http://localhost:5000/allTasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newTask),
       });
-      const data = await response.json();
+    
+    } finally {
       setIsSubmitting(false);
-      if (!data.success) {
-        alert('Failed to save task');
-      }
-    } catch (error) {
-      setIsSubmitting(false);
-      alert('Error saving task');
     }
   };
 
-
-
-
-  
-  // ✅ Edit Task
-  const editTask = (column, index, newText) => {
+  const editTask = (column, index, newText, field = 'text') => {
     setColumns((prev) => {
       const newColumns = { ...prev };
       if (newColumns[column] && newColumns[column][index]) {
-        newColumns[column][index].text = newText;
+        newColumns[column][index][field] = newText;
       }
       return { ...newColumns };
     });
   };
 
-  // ✅ Delete Task
   const deleteTask = (column, index) => {
     setColumns((prev) => {
       const newColumns = { ...prev };
@@ -153,72 +146,28 @@ const MyTasks = () => {
     });
   };
 
-  // ✅ Image Upload
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        addTask('image', reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
+
+  
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="board gap-6 w-full min-h-screen bg-red-50">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Task Management</h2>
+      <div className="board  w-full min-h-screen bg-gray-100 ">
+        <h2 className="text-3xl font-bold text-center text-purple-800 mb-4">My Work</h2>
 
-        <div className="justify-center items-center input-section w-full lg:flex gap-4 mb-8">
-          {/* Calendar */}
-          <div>
-            <Calendar onChange={setSelectedDate} value={selectedDate} className="mb-4" />
-          </div>
-
-          <div>
-            {/* Task Input */}
-            <div className="lg:flex gap-4 items-center">
-              <input
-                type="text"
-                className="border p-2 rounded-lg text-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter a new task"
-                value={newTaskText}
-                onChange={(e) => setNewTaskText(e.target.value)}
-              />
-              <button
-                className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
-                onClick={() => {
-                  if (newTaskText.trim()) {
-                    addTask('text', newTaskText);
-                    setNewTaskText('');
-                  }
-                }}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Adding...' : 'Add Task'}
-              </button>
-            </div>
-
-            {/* Image Upload */}
-            <div className="lg:flex gap-4 mt-3">
-              <input type="file" accept="image/*" className="border rounded-lg" onChange={handleImageUpload} />
-              <button className="bg-purple-600 text-white p-2 rounded-lg">Add Image</button>
-            </div>
+          <div className="divider divider-primary"></div>
+        <div className="flex flex-col lg:flex-row gap-4 items-center justify-center">
+          <Calendar onChange={setSelectedDate} value={selectedDate} className="mb-4" />
+          <div className="lg:flex gap-4">
+            <input type="text" className="border p-2 rounded-lg" placeholder="Task Title" value={newTaskText} onChange={(e) => setNewTaskText(e.target.value)} />
+            <input type="text" className="border p-2 rounded-lg" placeholder="Task Description" value={newTaskDescription} onChange={(e) => setNewTaskDescription(e.target.value)} />
+            <button className="bg-purple-800 text-white p-2 rounded-lg" onClick={addTask} disabled={isSubmitting}>
+              {isSubmitting ? 'Adding...' : 'Add Task'}
+            </button>
           </div>
         </div>
-
-        {/* Columns Section */}
-        <div className="columns w-full lg:flex gap-8 justify-between">
+        <div className="columns  lg:flex  gap-5 mt-6">
           {Object.keys(columns).map((column) => (
-            <Column 
-              key={column} 
-              column={column} 
-              tasks={columns[column]} 
-              moveTask={moveTask} 
-              editTask={editTask} 
-              deleteTask={deleteTask} 
-            />
+            <Column key={column} column={column} tasks={columns[column]} moveTask={moveTask} editTask={editTask} deleteTask={deleteTask} />
           ))}
         </div>
       </div>

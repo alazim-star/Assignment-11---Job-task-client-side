@@ -26,7 +26,7 @@ const MyProfile = () => {
   return (
     <div className="p-6 bg-red-50 min-h-screen container mx-auto">
       <header className="mb-6 text-center">
-        <h1 className="text-2xl font-bold">My Profile</h1>
+        <h1 className="text-2xl text-purple-600 font-bold">My Profile</h1>
         <div className="divider divider-primary"></div>
         <p className="text-gray-600">{formattedDate}</p>
         <p className="text-gray-600">
@@ -38,7 +38,11 @@ const MyProfile = () => {
 
         <div className="flex justify-center mt-4">
           {loading ? (
-            <p>Loading profile...</p>
+          
+
+          <span className="loading loading-spinner w-20 h-20 text-primary"></span>
+
+
           ) : (
             <img
               src={user?.photoURL}

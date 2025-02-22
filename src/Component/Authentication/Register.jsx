@@ -5,6 +5,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { AuthContext } from './AuthProvider';
 
+
+
 const Register = () => {
   const { createUser, updateUserProfile, signInWithGoogle } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -92,11 +94,11 @@ const Register = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gray-900 px-4">
+    <div className="relative min-h-screen flex items-center justify-center bg-[#24085a] px-4">
       {/* Background Image */}
-     
+
       {/* Registration Card */}
-      <div className="relative z-10 w-full max-w-md bg-white/30 backdrop-blur-lg shadow-lg rounded-lg p-6 sm:p-10">
+      <div className="relative z-10 w-full max-w-xl bg-white/10 backdrop-blur-lg shadow-lg rounded-lg p-6 sm:p-10">
         <h2 className="text-2xl font-bold text-center text-white">Register Your Account</h2>
 
         <form onSubmit={handleRegister} className="space-y-4 mt-4">
