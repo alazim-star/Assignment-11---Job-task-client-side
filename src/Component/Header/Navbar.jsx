@@ -4,6 +4,7 @@ import {useContext, useEffect, useState } from "react";
 
 
 import { AuthContext } from "../Authentication/AuthProvider";
+import Theme from "../Theme";
 const Navbar = () => {
   const {signOutUser,user,loading } = useContext(AuthContext);
   const [scrolled, setScrolled] = useState(false);
@@ -93,7 +94,7 @@ Login
 
         {/* Navigation Links */}
         <div className="hidden sm:flex items-center ">{links}</div>
-
+<Theme></Theme>
         {/* Login/Logout Button and User Information */}
         <div className=" items-center ">
           {loading ? (

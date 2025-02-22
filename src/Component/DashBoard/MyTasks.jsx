@@ -3,8 +3,9 @@ import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { FaHome, FaClock, FaTasks, FaTrash } from 'react-icons/fa';
-
+import {FaClock, FaTasks, FaTrash } from 'react-icons/fa';
+import { MdOutlineSubtitles } from "react-icons/md";
+import { LuNotebookText } from "react-icons/lu";
 const ItemType = 'TASK';
 
 const Task = ({ task, index, column, moveTask, editTask, deleteTask }) => {
@@ -17,7 +18,7 @@ const Task = ({ task, index, column, moveTask, editTask, deleteTask }) => {
   return (
     <div
       ref={drag}
-      className={`task bg-white p-4 rounded-lg shadow-md flex items-center justify-between cursor-pointer transition-all hover:bg-gray-100 ${
+      className={`task p-4 rounded-lg shadow-md flex items-center justify-between cursor-pointer transition-all hover:bg-gray-100 ${
         isDragging ? 'opacity-50' : 'opacity-100'
       }`}
     >
@@ -25,7 +26,7 @@ const Task = ({ task, index, column, moveTask, editTask, deleteTask }) => {
     
         <div className=''>
        <div className='flex gap-2 items-center'>
-       <FaHome className="text-purple-700 text-xl" />
+       <MdOutlineSubtitles  className="text-purple-700 text-xl" />
         <p className='underline'>  Title:</p> <input
             type="text"
             className="border-none focus:ring-0 w-full text-lg text-gray-700"
@@ -35,7 +36,7 @@ const Task = ({ task, index, column, moveTask, editTask, deleteTask }) => {
             placeholder="Task title"
           />
        </div>
-     <div className='flex gap-2'><FaHome className='text-purple-700 text-xl  '></FaHome>
+     <div className='flex gap-2'><LuNotebookText  className='text-purple-700 text-xl  '/>
     <p className='underline'> Description:</p> {task.description && (
           <textarea
               className="border-none focus:ring-0 w-full text-gray-600"
@@ -65,9 +66,9 @@ const Column = ({ column, tasks = [], moveTask, editTask, deleteTask }) => {
   });
 
   return (
-    <div ref={drop} className="column w-full max-w-sm bg-gray-100 border p-5 rounded-xl shadow-xl space-y-6">
+    <div ref={drop} className="column w-full max-w-sm bg-red-50 border p-5 rounded-xl space-y-6">
       <h3 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
-        <FaTasks className="text-gray-700" /> {column}
+        <FaTasks className="text-purple-800" /> {column}
       </h3>
       <div className="space-y-3">
         {tasks.map((task, index) => (
@@ -151,12 +152,12 @@ const MyTasks = () => {
   
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="board  w-full min-h-screen bg-gray-100 ">
+      <div className="board  w-full min-h-screen  ">
         <h2 className="text-3xl font-bold text-center text-purple-800 mb-4">My Work</h2>
 
           <div className="divider divider-primary"></div>
         <div className="flex flex-col lg:flex-row gap-4 items-center justify-center">
-          <Calendar onChange={setSelectedDate} value={selectedDate} className="mb-4" />
+          <Calendar onChange={setSelectedDate} value={selectedDate} className="mb-4 text-purple-500" />
           <div className="lg:flex gap-4">
             <input type="text" className="border p-2 rounded-lg" placeholder="Task Title" value={newTaskText} onChange={(e) => setNewTaskText(e.target.value)} />
             <input type="text" className="border p-2 rounded-lg" placeholder="Task Description" value={newTaskDescription} onChange={(e) => setNewTaskDescription(e.target.value)} />
