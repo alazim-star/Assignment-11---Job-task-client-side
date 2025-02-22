@@ -37,7 +37,7 @@ const Register = () => {
       const newClient = { name, email, photo, createdAt };
 
       // Save user to database
-      const response = await fetch('http://localhost:5000/users', {
+      const response = await fetch('https://y-one-steel.vercel.app/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newClient),
@@ -73,7 +73,7 @@ const Register = () => {
         createdAt: user.metadata.creationTime
       };
 
-      const response = await fetch("http://localhost:5000/users", {
+      const response = await fetch("https://y-one-steel.vercel.app/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newUser)

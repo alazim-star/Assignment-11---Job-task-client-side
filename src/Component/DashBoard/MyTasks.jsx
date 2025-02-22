@@ -118,7 +118,7 @@ const MyTasks = () => {
     setNewTaskDescription('');
     setIsSubmitting(true);
     try {
-      await fetch('http://localhost:5000/allTasks', {
+      await fetch('https://y-one-steel.vercel.app/allTasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newTask),
@@ -147,9 +147,6 @@ const MyTasks = () => {
     });
   };
 
-
-
-  
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="board  w-full min-h-screen  ">

@@ -7,7 +7,7 @@ const MyProfile = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/users")
+    fetch("https://y-one-steel.vercel.app/users")
       .then((res) => res.json())
       .then((data) => {
         setUsersData(data);
