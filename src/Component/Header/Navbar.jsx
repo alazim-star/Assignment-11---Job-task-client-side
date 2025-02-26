@@ -113,13 +113,13 @@ Login
               </p>
               <button
                 onClick={handleSignOut}
-                 className="px-4 py-2 border-2 border-primary text-primary rounded-full hover:bg-primary hover:text-white shadow-xl transition duration-300"
+                 className="px-4 py-2 border-2 border-primary  rounded-full hover:bg-primary hover:text-white shadow-xl transition duration-300"
               >
                 Sign Out
               </button>
             </div>
           ) : (
-            <Link to="/login" className=" hover:text-black hover:bg-white bg-primary rounded-full text-white px-8 py-3 ">
+            <Link to="/login" className=" hover:text-black hover:bg-white  rounded-full text-white px-8 py-3 ">
               Login
             </Link>
           )}

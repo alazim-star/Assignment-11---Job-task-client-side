@@ -91,7 +91,7 @@ const MyTasks = () => {
   const [columns, setColumns] = useState({ 'To-Do': [], 'In Progress': [], 'Done': [] });
   const [newTaskText, setNewTaskText] = useState('');
   const [newTaskDescription, setNewTaskDescription] = useState('');
-  const [selectedDate, setSelectedDate] = useState(new Date());
+ 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const moveTask = (fromColumn, fromIndex, toColumn) => {
@@ -154,7 +154,7 @@ const MyTasks = () => {
 
           <div className="divider divider-primary"></div>
         <div className="flex flex-col lg:flex-row gap-4 items-center justify-center">
-          <Calendar onChange={setSelectedDate} value={selectedDate} className="mb-4 text-purple-500" />
+          
           <div className="lg:flex gap-4">
             <input type="text" className="border p-2 rounded-lg" placeholder="Task Title" value={newTaskText} onChange={(e) => setNewTaskText(e.target.value)} />
             <input type="text" className="border p-2 rounded-lg" placeholder="Task Description" value={newTaskDescription} onChange={(e) => setNewTaskDescription(e.target.value)} />

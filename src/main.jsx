@@ -14,6 +14,8 @@ import Register from './Component/Authentication/Register.jsx';
 import DashBoard from './Component/Page/DashBoard.jsx';
 import MyTasks from './Component/DashBoard/MyTasks.jsx';
 import PrivateRoute from './Component/Authentication/PrivateRoute.jsx';
+import AddTasks from './Component/DashBoard/AddTasks.jsx';
+import MyTasks2 from './Component/DashBoard/MyTasks2.jsx';
 
 
 
@@ -47,6 +49,17 @@ const router = createBrowserRouter([
           {
             path: "myTasks",
             element: <MyTasks></MyTasks>,
+            
+          },
+        
+          {
+            path: "addTasks",
+            element: <AddTasks></AddTasks>,
+            
+          },
+          {
+            path: "mytasks2",
+            element: < MyTasks2></ MyTasks2>,
             
           },
         

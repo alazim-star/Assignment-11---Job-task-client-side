@@ -33,6 +33,20 @@ const DashBoard = () => {
                             My Tasks
                         </NavLink>
                     </li>
+                    <li>
+                        <NavLink to="/dashBoard/addTasks" className={({ isActive }) =>
+                            `p-3 mx-4 rounded-xl transition hover:translate-y-1 hover:font-bold hover:text-[#9f004d] ${isActive ? "text-blue-900 font-bold" : ""}`
+                        }>
+                            Add Tasks
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/dashBoard/mytasks2" className={({ isActive }) =>
+                            `p-3 mx-4 rounded-xl transition hover:translate-y-1 hover:font-bold hover:text-[#9f004d] ${isActive ? "text-blue-900 font-bold" : ""}`
+                        }>
+                            My Tasks2
+                        </NavLink>
+                    </li>
                   
                 </ul>
 
