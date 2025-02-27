@@ -140,7 +140,7 @@ const MyTasks2 = () => {
     return (
       <div
         ref={drag} // Attach drag behavior
-        className={`p-3 mb-3 
+        className={`p-2 mb-3 
           ${task.category.toLowerCase() === 'to-do' ? 'bg-purple-100'  // Purple for To-Do
             : task.category.toLowerCase() === 'in-progress' ? 'bg-blue-100' // Blue for In Progress
             : task.category.toLowerCase() === 'done' ? 'bg-green-100' : ''} 
@@ -181,8 +181,8 @@ const MyTasks2 = () => {
     });
 
     return (
-      <div ref={drop} className="bg-pink-200 p-4 rounded-lg min-h-[200px]">
-        <h2 className="text-center font-bold text-2xl capitalize">{category}</h2>
+      <div ref={drop} className="bg-pink-200 p-2 lg:p-5 rounded-lg min-h-[200px]">
+        <h2 className="text-center font-bold lg:text-2xl text-xl capitalize">{category}</h2>
         {loading ? (
           <p>Loading...</p>
         ) : tasks[category]?.length ? (
@@ -196,7 +196,7 @@ const MyTasks2 = () => {
 
   return (
     <DndProvider backend={HTML5Backend}> {/* Wrap the app in DndProvider for drag-and-drop context */}
-      <div className="p-5 grid lg:grid-cols-3 md:grid-cols-2 gap-5 text-black">
+      <div className="lg:p-5 grid lg:grid-cols-3 md:grid-cols-2 gap-5 text-black">
         {['todo', 'inProgress', 'done'].map((category) => (
           <DropZone key={category} category={category} /> // Render DropZone for each category
         ))}

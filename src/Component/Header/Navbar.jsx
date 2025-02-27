@@ -63,10 +63,10 @@ Login
           : "bg-gradient-to-l from-pink-800 to-[#23085a] text-white "
       } w-full sticky top-0 z-50 transition-all duration-300`}
     >
-      <div className=" flex flex-wrap items-center justify-between px-6 container mx-auto">
+      <div className=" flex flex-wrap items-center lg:justify-between px-6 container mx-auto">
         {/* Hamburger Menu for Mobile */}
         <button
-          className="sm:hidden block text-white focus:outline-none mr-4 "
+          className="sm:hidden block text-white focus:outline-none "
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           <svg
@@ -86,11 +86,11 @@ Login
         </button>
 
         {/* Logo and Title */}
-        <div className=" flex items-center mr-48  ">
+       
         
           <img className="lg:w-24 h-24 " src="https://i.ibb.co.com/HLDFFhhL/Brown-Illustration-Kindergarten-School-Logo-1-removebg-preview.png" alt="Logo" />
-         <Link to='/'> <h2 className="text-3xl font-bold uppercase">Circle</h2></Link>
-        </div>
+         <Link to='/'> <h2 className="text-3xl mr-5 font-bold uppercase">Circle</h2></Link>
+      
 
         {/* Navigation Links */}
         <div className="hidden sm:flex items-center ">{links}</div>
