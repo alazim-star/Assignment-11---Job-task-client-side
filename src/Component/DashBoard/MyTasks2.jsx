@@ -48,7 +48,7 @@ const MyTasks2 = () => {
         return;
       }
 
-      const response = await axios.get(`http://localhost:5000/allTasks/${userEmail}`); // Send GET request to fetch tasks
+      const response = await axios.get(`https://assignment-11-job-task-server-side.vercel.app/allTasks/${userEmail}`); // Send GET request to fetch tasks
       if (response.status === 200) { // If response is successful
         setTasks({
           todo: response.data.filter(task => task.category.toLowerCase() === 'to-do'), // Set tasks in "to-do" category
@@ -83,7 +83,7 @@ const MyTasks2 = () => {
     }).then(async (result) => {
       if (result.isConfirmed) { // If user confirms deletion
         try {
-          await axios.delete(`http://localhost:5000/allTasks/${taskId}`); // Send DELETE request to remove the task
+          await axios.delete(`https://assignment-11-job-task-server-side.vercel.app/allTasks/${taskId}`); // Send DELETE request to remove the task
           fetchAllTasks(); // Refresh task list after deletion
           Swal.fire('Deleted!', 'Task has been deleted.', 'success');
         } catch (error) { // Handle error during task deletion
@@ -102,7 +102,7 @@ const MyTasks2 = () => {
   // Function to save the edited task
   const saveTask = async () => {
     try {
-      await axios.put(`http://localhost:5000/allTasks/${editedTask._id}`, editedTask); // Send PUT request to update the task
+      await axios.put(`https://assignment-11-job-task-server-side.vercel.app/allTasks/${editedTask._id}`, editedTask); // Send PUT request to update the task
       setModalVisible(false); // Close the modal after saving
       fetchAllTasks(); // Refresh tasks after saving
       Swal.fire("Success!", "Task updated successfully.", "success");
@@ -120,7 +120,7 @@ const MyTasks2 = () => {
   const moveTask = async (taskId, newCategory) => {
     try {
       // Send PUT request to update the task's category
-      await axios.put(`http://localhost:5000/allTasks/${taskId}`, { category: newCategory });
+      await axios.put(`https://assignment-11-job-task-server-side.vercel.app/allTasks/${taskId}`, { category: newCategory });
       fetchAllTasks(); // Refresh tasks after moving
     } catch (error) { // Handle error during task movement
       Swal.fire("Error!", "Failed to move task.", "error");

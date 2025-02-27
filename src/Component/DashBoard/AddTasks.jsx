@@ -47,7 +47,7 @@ const AddTasks = () => {
     console.log("Submitted Task Data:", task); // Debugging: Log the task data before submission
 
     try {
-      const response = await fetch("http://localhost:5000/allTasks", {
+      const response = await fetch("https://assignment-11-job-task-server-side.vercel.app/allTasks", {
         method: "POST", // POST request to the server to save the task
         headers: {
           "Content-Type": "application/json", // Sending JSON data
