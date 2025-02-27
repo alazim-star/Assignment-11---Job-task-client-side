@@ -1,41 +1,70 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { CiStopwatch, CiCalendarDate, CiEdit } from "react-icons/ci";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Swal from 'sweetalert2';
+import axios from 'axios';
+import { AuthContext } from './../Authentication/AuthProvider';
 
 const MyTasks2 = () => {
+  const { user } = useContext(AuthContext); // Get the logged-in user from AuthContext
   const [tasks, setTasks] = useState({ todo: [], inProgress: [], done: [] });
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
   const [editedTask, setEditedTask] = useState({ title: '', description: '', completionDate: '', completionTime: '' });
 
+
+
+
+
+
+
+  // Fetch tasks based on the logged-in user's email
   const fetchAllTasks = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/allTasks');
-      const data = await response.json();
+      const userEmail = user?.email; // Use email from AuthContext
+      if (!userEmail) {
+        Swal.fire('Error', 'User is not authenticated', 'error');
+        return;
+      }
 
-      // ✅ Ensure category names match exactly with the backend response
-      const categorizedTasks = {
-        todo: data.filter(task => task.category.toLowerCase() === 'to-do'),
-        inProgress: data.filter(task => task.category.toLowerCase() === 'in-progress'),
-        done: data.filter(task => task.category.toLowerCase() === 'done')
-      };
+      const response = await axios.get(`http://localhost:5000/allTasks/${userEmail}`);
+      console.log(response.data); // Log the response data to see if tasks are returned
 
-      setTasks(categorizedTasks);
+      if (response.status === 200) {
+        setTasks({
+          todo: response.data.filter(task => task.category.toLowerCase() === 'to-do'),
+          inProgress: response.data.filter(task => task.category.toLowerCase() === 'in-progress'),
+          done: response.data.filter(task => task.category.toLowerCase() === 'done'),
+        });
+      } else {
+        setTasks({ todo: [], inProgress: [], done: [] });
+      }
     } catch (error) {
-      console.error('Error fetching tasks:', error);
-      Swal.fire('Error', 'Failed to load tasks', 'error');
+      console.error("Error fetching tasks:", error);
+      Swal.fire("Error", "Failed to fetch tasks", "error");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAllTasks();
-  }, []);
+    if (user?.email) {
+      fetchAllTasks();  // Fetch tasks when email is available
+    }
+  }, [user?.email]); // Re-fetch when the user email changes
 
+
+
+
+
+
+
+
+
+
+
+  // Delete a task
   const deleteTask = async (taskId) => {
     Swal.fire({
       title: 'Are you sure?',
@@ -46,8 +75,8 @@ const MyTasks2 = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await fetch(`http://localhost:5000/allTasks/${taskId}`, { method: 'DELETE' });
-          fetchAllTasks();
+          await axios.delete(`http://localhost:5000/allTasks/${taskId}`);
+          fetchAllTasks(); // Refresh tasks after deletion
           Swal.fire('Deleted!', 'Task has been deleted.', 'success');
         } catch (error) {
           Swal.fire('Error', 'Failed to delete the task', 'error');
@@ -56,44 +85,44 @@ const MyTasks2 = () => {
     });
   };
 
+  // Edit a task
   const editTask = (task) => {
-    setSelectedTask(task);
     setEditedTask({ ...task });
     setModalVisible(true);
   };
 
+  // Save the edited task
   const saveTask = async () => {
     try {
-      await fetch(`http://localhost:5000/allTasks/${editedTask._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editedTask),
-      });
+      await axios.put(`http://localhost:5000/allTasks/${editedTask._id}`, editedTask);
       setModalVisible(false);
-      fetchAllTasks();
+      fetchAllTasks(); // Refresh tasks after saving
       Swal.fire("Success!", "Task updated successfully.", "success");
     } catch (error) {
       Swal.fire("Error!", "Failed to save task. Try again!", "error");
     }
   };
 
+  // Handle input changes in the edit form
   const handleChange = (e) => {
     setEditedTask({ ...editedTask, [e.target.name]: e.target.value });
   };
 
   return (
     <div className="p-5 grid grid-cols-3 gap-5">
+      {/* Render tasks for each category */}
       {['todo', 'inProgress', 'done'].map((category, index) => (
         <div key={index} className="bg-gray-100 p-4 rounded-lg">
-          <h2 className="text-center font-bold text-2xl">{category}</h2>
+          <h2 className="text-center font-bold text-2xl capitalize">{category}</h2>
           {loading ? (
             <p>Loading...</p>
-          ) : tasks[category]?.length ? ( // ✅ Corrected tasks access
+          ) : tasks[category]?.length ? (
             tasks[category].map((task) => (
               <div key={task._id} className="p-3 mb-3 bg-white shadow flex justify-between">
                 <div>
-                  <h4 className="font-semibold">{task.title}</h4>
-                  <p>{task.description}</p>
+                  <h4 className="font-semibold">Title : {task.title}</h4>
+                  <p>Description : {task.description}</p>
+                  <p>Email : {task.email}</p>
                   <div className="flex gap-3 text-sm">
                     <p className="flex items-center gap-1"><CiCalendarDate /> {task.completionDate}</p>
                     <p className="flex items-center gap-1"><CiStopwatch /> {task.completionTime}</p>
@@ -111,6 +140,7 @@ const MyTasks2 = () => {
         </div>
       ))}
 
+      {/* Edit Task Modal */}
       {modalVisible && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
           <div className="bg-white p-6 rounded-lg w-96">
