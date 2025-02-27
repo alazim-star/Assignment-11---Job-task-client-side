@@ -4,8 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { AuthContext } from './AuthProvider';
-
-
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 const Register = () => {
   const { createUser, updateUserProfile, signInWithGoogle } = useContext(AuthContext);
@@ -22,7 +21,7 @@ const Register = () => {
     const password = e.target.password.value;
     const firstName = e.target.firstName.value;
     const lastName = e.target.lastName.value;
-    
+
     // Password Validation
     if (!/^(?=.*[a-z])(?=.*[A-Z]).{6,}$/.test(password)) {
       setPasswordError("Password must have at least 6 characters, include an uppercase and a lowercase letter.");
@@ -46,15 +45,26 @@ const Register = () => {
       const data = await response.json();
 
       if (data.insertedId) {
-        toast.success("Registration successful! Welcome!");
+        // Show SweetAlert success message
+        Swal.fire({
+          title: 'Registration Successful!',
+          text: 'Welcome to our platform!',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        }).then(() => {
+          // Add a timeout before navigating to give time for the SweetAlert to close
+          setTimeout(() => {
+            navigate('/'); // Navigate to the home page after the alert closes
+          }, 500); // Adjust the timeout if needed
+        });
       }
 
       // Update Profile
       await updateUserProfile({ displayName: `${firstName} ${lastName}`, photoURL: photo });
 
+      // Reset form and state after successful registration
       e.target.reset();
       setPhoto("");
-      navigate('/');
     } catch (error) {
       toast.error("Registration failed: " + error.message);
     }
@@ -87,7 +97,7 @@ const Register = () => {
         toast.info("User already exists in database.");
       }
 
-      navigate("/");
+      navigate("/"); // Navigate after Google sign-in
     } catch (error) {
       toast.error("Google Sign-In failed: " + error.message);
     }
@@ -95,8 +105,6 @@ const Register = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-[#24085a] px-4">
-      {/* Background Image */}
-
       {/* Registration Card */}
       <div className="relative z-10 w-full max-w-xl bg-white/10 backdrop-blur-lg shadow-lg rounded-lg p-6 sm:p-10">
         <h2 className="text-2xl font-bold text-center text-white">Register Your Account</h2>
@@ -136,7 +144,7 @@ const Register = () => {
             <div className="relative">
               <input name="password" type={showPassword ? "text" : "password"} placeholder="Enter your password" className="input input-bordered w-full" required />
               <span className="absolute top-1/2 transform -translate-y-1/2 right-4 cursor-pointer text-gray-300"
-                onClick={() => setShowPassword(!showPassword)}>
+                onClick={() => setShowPassword(!showPassword)} >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>

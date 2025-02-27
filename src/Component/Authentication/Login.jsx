@@ -64,19 +64,17 @@ const Login = () => {
             })
             .catch((error) => {
                 console.error("ERROR:", error.message);
+                toast.error("Google login failed: " + error.message, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
             });
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#23085a]">
-             {/* Lottie */}
-              
-     
             <div className="relative z-10 w-full max-w-md bg-white/10 backdrop-blur-lg shadow-lg rounded-lg p-6 sm:p-10">
                 <ToastContainer />
-
-               
-               
 
                 <h2 className="text-3xl font-bold text-center text-white mb-8">
                     Login to Your Account
@@ -144,11 +142,11 @@ const Login = () => {
                 </div>
             </div>
             <Lottie
-                        play
-                        loop
-                        animationData={Lotti}
-                        style={{ width: "100%", height: "auto", maxWidth: "400px" }}
-                    />
+                play
+                loop
+                animationData={Lotti}
+                style={{ width: "100%", height: "auto", maxWidth: "400px" }}
+            />
         </div>
     );
 };

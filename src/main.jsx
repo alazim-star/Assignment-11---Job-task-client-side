@@ -12,11 +12,11 @@ import AuthProvider from './Component/Authentication/AuthProvider.jsx';
 import Login from './Component/Authentication/Login.jsx';
 import Register from './Component/Authentication/Register.jsx';
 import DashBoard from './Component/Page/DashBoard.jsx';
-import MyTasks from './Component/DashBoard/MyTasks.jsx';
 import PrivateRoute from './Component/Authentication/PrivateRoute.jsx';
 import AddTasks from './Component/DashBoard/AddTasks.jsx';
 import MyTasks2 from './Component/DashBoard/MyTasks2.jsx';
-
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 
 const router = createBrowserRouter([
@@ -46,11 +46,6 @@ const router = createBrowserRouter([
         element:<PrivateRoute> <DashBoard></DashBoard></PrivateRoute>,
         children:[
         
-          {
-            path: "myTasks",
-            element: <MyTasks></MyTasks>,
-            
-          },
         
           {
             path: "addTasks",
@@ -59,8 +54,9 @@ const router = createBrowserRouter([
           },
           {
             path: "mytasks2",
-            element: < MyTasks2></ MyTasks2>,
-            
+            element: 
+            <DndProvider backend={HTML5Backend}>
+              < MyTasks2></ MyTasks2></DndProvider>,
           },
         
         ]

@@ -1,12 +1,13 @@
-import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";  // Import the useNavigate hook
+import { AuthContext } from "../Authentication/AuthProvider";
+import { useContext, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css"; // Import Calendar CSS
 import { FaArrowRight, FaCalendarAlt, FaTasks } from "react-icons/fa";
 import Swal from "sweetalert2";
-import { AuthContext } from "../Authentication/AuthProvider";
-
 const AddTasks = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();  // Initialize navigate function
 
   // State for toggling calendar visibility and storing task data
   const [showCalendar, setShowCalendar] = useState(false);
@@ -71,6 +72,9 @@ const AddTasks = () => {
           completionDate: new Date().toISOString().split("T")[0], // Reset to current date
           completionTime: new Date().toLocaleTimeString("en-US", { hour12: false }), // Reset to current time
         });
+
+        // Navigate to 'Dashboard/MyTasks2' after success
+        navigate("/Dashboard/MyTasks2");
       } else {
         Swal.fire({
           title: "Error!",
@@ -91,15 +95,16 @@ const AddTasks = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-xl font-semibold text-white bg-blue-500 py-3 px-4 rounded-t-lg flex items-center">
+<div className=" bg-pink-200 h-screen">
+<div className="max-w-3xl mx-auto bg-purple-200 rounded-lg shadow-lg p-6">
+      <h2 className="text-xl font-semibold  bg-gradient-to-l from-pink-800 to-[#23085a] text-white  py-3 px-4 rounded-t-lg flex items-center">
         <FaTasks className="mr-2" /> Add New Task
       </h2>
 
-      <form onSubmit={handleSubmit} className="p-4 space-y-4">
+      <form onSubmit={handleSubmit} className="p-4 space-y-4 text-black">
         {/* Title Input */}
         <div>
-          <label className="block font-medium text-gray-700">Title</label>
+          <label className="block font-medium ">Title</label>
           <input
             type="text"
             name="title"
@@ -113,13 +118,13 @@ const AddTasks = () => {
 
         {/* Description Textarea */}
         <div>
-          <label className="block font-medium text-gray-700">Description</label>
+          <label className="block font-medium ">Description</label>
           <textarea
             name="description"
             value={task.description}
             onChange={handleChange}
             placeholder="Write a brief description..."
-            className="w-full p-2 border rounded-md"
+            className="w-full p-2 border rounded-md text-black"
           />
         </div>
 
@@ -129,7 +134,7 @@ const AddTasks = () => {
             <label>Category</label>
             <select
               name="category"
-              className="select select-bordered w-full"
+              className="select select-bordered w-full "
               value={task.category} // Bind the selected category to state
               onChange={handleChange} // Ensure onChange updates the category
               required
@@ -143,7 +148,7 @@ const AddTasks = () => {
 
         {/* Task Completion Date & Time Picker */}
         <div className="relative">
-          <label className="block font-medium text-gray-700">
+          <label className="block font-medium ">
             Task Completion Date & Time
           </label>
           <div className="relative">
@@ -155,7 +160,7 @@ const AddTasks = () => {
               className="w-full p-2 border rounded-md cursor-pointer"
             />
             <FaCalendarAlt
-              className="absolute right-3 top-3 text-gray-500 cursor-pointer"
+              className="absolute right-3 top-3  cursor-pointer"
               onClick={() => setShowCalendar(!showCalendar)} // Toggle calendar visibility
             />
           </div>
@@ -182,12 +187,13 @@ const AddTasks = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full flex items-center justify-center bg-black text-white py-2 rounded-md text-lg hover:bg-gray-800"
+          className="w-full items-center border-2  rounded-full bg-[#23085a] text-white shadow-xl transition btn duration-300 py-6"
         >
-          Add Task <FaArrowRight className="ml-2" />
+          Add Task 
         </button>
       </form>
     </div>
+</div>
   );
 };
 

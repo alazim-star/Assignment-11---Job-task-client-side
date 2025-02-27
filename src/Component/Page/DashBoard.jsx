@@ -18,21 +18,15 @@ const DashBoard = () => {
     return (
         <div className="flex">
             {/* Sidebar */}
-            <div className="min-h-screen bg-gradient-to-l from-pink-800 to-[#23085a] text-white w-64 shadow-lg">
-                <div className="lg:p-6 text-center text-2xl font-bold">
+            <div className="min-h-screen bg-gradient-to-l from-pink-800 to-[#23085a] text-white lg:w-64 shadow-lg">
+                <div className="lg:p-6 ml-5 lg:text-2xl font-bold">
                 
                         <h2>Dashboard</h2>
                 </div>
 
                 <ul className='p-2 menu'>
                     
-                    <li>
-                        <NavLink to="/dashBoard/myTasks" className={({ isActive }) =>
-                            `p-3 mx-4 rounded-xl transition hover:translate-y-1 hover:font-bold hover:text-[#9f004d] ${isActive ? "text-blue-900 font-bold" : ""}`
-                        }>
-                            My Tasks
-                        </NavLink>
-                    </li>
+           
                     <li>
                         <NavLink to="/dashBoard/addTasks" className={({ isActive }) =>
                             `p-3 mx-4 rounded-xl transition hover:translate-y-1 hover:font-bold hover:text-[#9f004d] ${isActive ? "text-blue-900 font-bold" : ""}`

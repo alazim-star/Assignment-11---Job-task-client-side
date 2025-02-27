@@ -41,7 +41,7 @@ Home
 
     
    
-        <NavLink to="/dashboard/myTasks" className="hover:text-purple-600 transition mx-4">
+        <NavLink to="/dashBoard/addTasks" className="hover:text-purple-600 transition mx-4">
    Dashboard
         </NavLink>
       
