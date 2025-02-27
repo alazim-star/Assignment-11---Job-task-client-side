@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css"; // Import Calendar CSS
 import { FaArrowRight, FaCalendarAlt, FaTasks } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { AuthContext } from "../Authentication/AuthProvider";
 
 const AddTasks = () => {
+  const { user } = useContext(AuthContext);
+
   // State for toggling calendar visibility and storing task data
   const [showCalendar, setShowCalendar] = useState(false);
   const [task, setTask] = useState({
+    email: user?.email || "", // Use authenticated user's email
     title: "",
     description: "",
-    category: "To-Do", // Default category set to "Agriculture"
+    category: "To-Do", // Default category set to "To-Do"
     completionDate: new Date().toISOString().split("T")[0], // Default to today's date
     completionTime: new Date().toLocaleTimeString("en-US", { hour12: false }), // Default to current time
   });
@@ -58,11 +62,12 @@ const AddTasks = () => {
           confirmButtonText: "OK",
         });
 
-        // Optionally reset form after success
+        // Reset form after success
         setTask({
+          email: user?.email || "",
           title: "",
           description: "",
-          category: "Agriculture", // Reset category to default "Agriculture"
+          category: "To-Do", // Reset category to "To-Do"
           completionDate: new Date().toISOString().split("T")[0], // Reset to current date
           completionTime: new Date().toLocaleTimeString("en-US", { hour12: false }), // Reset to current time
         });
@@ -132,7 +137,6 @@ const AddTasks = () => {
               <option value="To-Do">To-Do</option>
               <option value="In-progress">In-Progress</option>
               <option value="Done">Done</option>
-            
             </select>
           </div>
         </div>

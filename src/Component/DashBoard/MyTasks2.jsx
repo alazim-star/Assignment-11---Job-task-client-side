@@ -4,30 +4,30 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import Swal from 'sweetalert2';
 
 const MyTasks2 = () => {
-  const [todoTasks, setTodoTasks] = useState([]);
-  const [inProgressTasks, setInProgressTasks] = useState([]);
-  const [doneTasks, setDoneTasks] = useState([]);
+  const [tasks, setTasks] = useState({ todo: [], inProgress: [], done: [] });
   const [loading, setLoading] = useState(true);
-  const [selectedTask, setSelectedTask] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
   const [editedTask, setEditedTask] = useState({ title: '', description: '', completionDate: '', completionTime: '' });
-  const [error, setError] = useState(null);
 
   const fetchAllTasks = async () => {
     setLoading(true);
     try {
-      const categories = ['To-Do', 'In-progress', 'Done'];
-      const responses = await Promise.all(
-        categories.map(category => fetch(`http://localhost:5000/allTasks/category/${category}`).then(res => res.json()))
-      );
+      const response = await fetch('http://localhost:5000/allTasks');
+      const data = await response.json();
 
-      setTodoTasks(responses[0]);
-      setInProgressTasks(responses[1]);
-      setDoneTasks(responses[2]);
-      setLoading(false);
+      // ✅ Ensure category names match exactly with the backend response
+      const categorizedTasks = {
+        todo: data.filter(task => task.category.toLowerCase() === 'to-do'),
+        inProgress: data.filter(task => task.category.toLowerCase() === 'in-progress'),
+        done: data.filter(task => task.category.toLowerCase() === 'done')
+      };
+
+      setTasks(categorizedTasks);
     } catch (error) {
       console.error('Error fetching tasks:', error);
-      setError('Failed to fetch tasks. Please try again later.');
+      Swal.fire('Error', 'Failed to load tasks', 'error');
+    } finally {
       setLoading(false);
     }
   };
@@ -36,30 +36,21 @@ const MyTasks2 = () => {
     fetchAllTasks();
   }, []);
 
-  const deleteTask = async (taskId, category) => {
+  const deleteTask = async (taskId) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: "You won't be able to revert this!",
+      text: "This action cannot be undone!",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, delete it!',
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await fetch(`http://localhost:5000/allTasks/${taskId}`, { method: 'DELETE' });
-          const data = await res.json();
-          if (data.deletedCount > 0) {
-            Swal.fire('Deleted!', 'The task has been deleted.', 'success');
-            // Update state after deletion
-            if (category === 'To-Do') setTodoTasks(prev => prev.filter(task => task._id !== taskId));
-            if (category === 'In-progress') setInProgressTasks(prev => prev.filter(task => task._id !== taskId));
-            if (category === 'Done') setDoneTasks(prev => prev.filter(task => task._id !== taskId));
-          }
-        } catch (err) {
+          await fetch(`http://localhost:5000/allTasks/${taskId}`, { method: 'DELETE' });
+          fetchAllTasks();
+          Swal.fire('Deleted!', 'Task has been deleted.', 'success');
+        } catch (error) {
           Swal.fire('Error', 'Failed to delete the task', 'error');
-          console.error('Error deleting task:', err);
         }
       }
     });
@@ -71,19 +62,15 @@ const MyTasks2 = () => {
     setModalVisible(true);
   };
 
-  const saveTask = async (updatedTask) => {
+  const saveTask = async () => {
     try {
-      await fetch(`http://localhost:5000/allTasks/${updatedTask._id}`, {
+      await fetch(`http://localhost:5000/allTasks/${editedTask._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedTask),
+        body: JSON.stringify(editedTask),
       });
-
-      setTodoTasks(todoTasks.map(task => task._id === updatedTask._id ? updatedTask : task));
-      setInProgressTasks(inProgressTasks.map(task => task._id === updatedTask._id ? updatedTask : task));
-      setDoneTasks(doneTasks.map(task => task._id === updatedTask._id ? updatedTask : task));
-
       setModalVisible(false);
+      fetchAllTasks();
       Swal.fire("Success!", "Task updated successfully.", "success");
     } catch (error) {
       Swal.fire("Error!", "Failed to save task. Try again!", "error");
@@ -91,194 +78,58 @@ const MyTasks2 = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditedTask((prev) => ({ ...prev, [name]: value }));
+    setEditedTask({ ...editedTask, [e.target.name]: e.target.value });
   };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    saveTask(editedTask);
-  };
-
-  const getCurrentDateAndTime = () => {
-    const now = new Date();
-    const date = now.toISOString().split('T')[0];
-    const time = now.toLocaleTimeString('en-US', { hour12: false });
-    return { date, time };
-  };
-
-  useEffect(() => {
-    if (modalVisible) {
-      const { date, time } = getCurrentDateAndTime();
-      setEditedTask((prev) => ({
-        ...prev,
-        completionDate: date,
-        completionTime: time,
-      }));
-    }
-  }, [modalVisible]);
 
   return (
     <div className="p-5 grid grid-cols-3 gap-5">
-      {error && <div className="bg-red-500 text-white p-3 rounded">{error}</div>}
-  
-      {/* To-Do Tasks */}
-      <div className="bg-red-50 p-4 rounded-lg">
-        <h2 className="text-center font-bold text-3xl">To-Do</h2>
-        {loading ? (
-          <p>Loading...</p>
-        ) : todoTasks.length ? (
-          todoTasks.map((task) => (
-            <div key={task._id} className="p-3 mb-3 bg-red-200 flex justify-between">
-              <div>
-                <h4 className="font-semibold">{task.title}</h4>
-                <p>{task.description}</p>
-                <div className="flex gap-3">
-                  <p className="flex items-center gap-1"><CiCalendarDate />{task.completionDate}</p>
-                  <p className="flex items-center gap-1"><CiStopwatch />{task.completionTime}</p>
+      {['todo', 'inProgress', 'done'].map((category, index) => (
+        <div key={index} className="bg-gray-100 p-4 rounded-lg">
+          <h2 className="text-center font-bold text-2xl">{category}</h2>
+          {loading ? (
+            <p>Loading...</p>
+          ) : tasks[category]?.length ? ( // ✅ Corrected tasks access
+            tasks[category].map((task) => (
+              <div key={task._id} className="p-3 mb-3 bg-white shadow flex justify-between">
+                <div>
+                  <h4 className="font-semibold">{task.title}</h4>
+                  <p>{task.description}</p>
+                  <div className="flex gap-3 text-sm">
+                    <p className="flex items-center gap-1"><CiCalendarDate /> {task.completionDate}</p>
+                    <p className="flex items-center gap-1"><CiStopwatch /> {task.completionTime}</p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <button onClick={() => editTask(task)} className="text-blue-600 hover:text-blue-800"><CiEdit /></button>
+                  <button onClick={() => deleteTask(task._id)} className="text-red-600 hover:text-red-800"><RiDeleteBin6Line /></button>
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
-                <button onClick={() => editTask(task)} className="px-2 py-2 border-2 border-primary text-primary rounded-full hover:bg-primary hover:text-white shadow-xl transition duration-300">
-                  <CiEdit />
-                </button>
-                <button onClick={() => deleteTask(task._id, 'To-Do')} className="bg-pink-600 px-2 text-white py-2 rounded-full">
-                  <RiDeleteBin6Line />
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>No tasks in this category</p>
-        )}
-      </div>
-  
-      {/* In-progress Tasks */}
-      <div className="bg-purple-100 p-4 rounded-lg ">
-        <h2 className="text-center font-bold text-3xl">In-progress</h2>
-        {loading ? (
-          <p>Loading...</p>
-        ) : inProgressTasks.length ? (
-          inProgressTasks.map((task) => (
-            <div key={task._id} className="p-3 mb-3 bg-purple-200 flex justify-between">
-              <div>
-                <h4 className="font-semibold">{task.title}</h4>
-                <p>{task.description}</p>
-                <div className="flex gap-3">
-                  <p className="flex items-center gap-1"><CiCalendarDate />{task.completionDate}</p>
-                  <p className="flex items-center gap-1"><CiStopwatch />{task.completionTime}</p>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <button onClick={() => editTask(task)} className="px-2 py-2 border-2 border-primary text-primary rounded-full hover:bg-primary hover:text-white shadow-xl transition duration-300">
-                  <CiEdit />
-                </button>
-                <button onClick={() => deleteTask(task._id, 'In-progress')} className="bg-pink-600 px-2 text-white py-2 rounded-full">
-                  <RiDeleteBin6Line />
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>No tasks in this category</p>
-        )}
-      </div>
-  
-      {/* Done Tasks */}
-      <div className="bg-green-100 p-4 rounded-lg">
-        <h2 className="text-center font-bold text-3xl">Done</h2>
-        {loading ? (
-          <p>Loading...</p>
-        ) : doneTasks.length ? (
-          doneTasks.map((task) => (
-            <div key={task._id} className="p-3 mb-3 bg-green-200 flex justify-between">
-              <div>
-                <h4 className="font-semibold">{task.title}</h4>
-                <p>{task.description}</p>
-                <div className="flex gap-3">
-                  <p className="flex items-center gap-1"><CiCalendarDate />{task.completionDate}</p>
-                  <p className="flex items-center gap-1"><CiStopwatch />{task.completionTime}</p>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <button onClick={() => editTask(task)} className="px-2 py-2 border-2 border-primary text-primary rounded-full hover:bg-primary hover:text-white shadow-xl transition duration-300">
-                  <CiEdit />
-                </button>
-                <button onClick={() => deleteTask(task._id, 'Done')} className="bg-pink-600 px-2 text-white py-2 rounded-full">
-                  <RiDeleteBin6Line />
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>No tasks in this category</p>
-        )}
-      </div>
-  
-      {/* Modal for editing task */}
+            ))
+          ) : (
+            <p>No tasks in this category</p>
+          )}
+        </div>
+      ))}
+
       {modalVisible && (
-        <div className="fixed inset-0 flex justify-center items-center text-white bg-opacity-50 z-50">
-          <div className="bg-gradient-to-l from-pink-800 to-[#23085a] p-6 rounded-lg w-96">
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg w-96">
             <h2 className="text-xl font-bold mb-4">Edit Task</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label className="block">Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={editedTask.title}
-                  onChange={handleChange}
-                  className="w-full border p-2"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block">Description</label>
-                <textarea
-                  name="description"
-                  value={editedTask.description}
-                  onChange={handleChange}
-                  className="w-full border p-2"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block">Completion Date</label>
-                <input
-                  type="date"
-                  name="completionDate"
-                  value={editedTask.completionDate}
-                  onChange={handleChange}
-                  className="w-full border p-2 text-white"
-                />
-              </div>
-  
-              <div className="mb-4">
-                <label className="block">Completion Time</label>
-                <input
-                  type="time"
-                  name="completionTime"
-                  value={editedTask.completionTime}
-                  onChange={handleChange}
-                  className="w-full border p-2 text-white"
-                />
-              </div>
-  
+            <form onSubmit={(e) => { e.preventDefault(); saveTask(); }}>
+              <input type="text" name="title" value={editedTask.title} onChange={handleChange} className="w-full border p-2 mb-2" />
+              <textarea name="description" value={editedTask.description} onChange={handleChange} className="w-full border p-2 mb-2"></textarea>
+              <input type="date" name="completionDate" value={editedTask.completionDate} onChange={handleChange} className="w-full border p-2 mb-2" />
+              <input type="time" name="completionTime" value={editedTask.completionTime} onChange={handleChange} className="w-full border p-2 mb-2" />
               <div className="flex justify-between">
-                <button
-                  type="button"
-                  onClick={() => setModalVisible(false)}
-                  className="bg-pink-600 text-white p-2 rounded"
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="px-4 py-2 border-2 border-primary text-white rounded-full hover:bg-primary hover:text-white shadow-xl transition duration-300">
-                  Save
-                </button>
+                <button type="button" onClick={() => setModalVisible(false)} className="bg-gray-400 px-4 py-2 rounded">Cancel</button>
+                <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
               </div>
             </form>
           </div>
         </div>
       )}
     </div>
-  )
-}
+  );
+};
+
 export default MyTasks2;
